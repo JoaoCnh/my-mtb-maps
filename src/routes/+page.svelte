@@ -1,59 +1,64 @@
-<script>
-	import Counter from './Counter.svelte';
-	import welcome from '$lib/images/svelte-welcome.webp';
-	import welcome_fallback from '$lib/images/svelte-welcome.png';
+<script lang="ts">
+	import Map from './Map.svelte';
+	import Key from './Key.svelte';
+	import Marker from './Marker.svelte';
+	import MetaCommand from './MetaCommand.svelte';
+	import MapResetCommand from './MapResetCommand.svelte';
+
+	import { defaultCenter } from '$lib/mapbox';
+
+	import type { PageData } from './$types';
+
+	export let data: PageData;
+
+	function handleMapLoad(map: mapboxgl.Map) {
+		map.addSource('mapbox-dem', {
+			type: 'raster-dem',
+			url: 'mapbox://mapbox.terrain-rgb'
+		});
+
+		map.setTerrain({
+			source: 'mapbox-dem',
+			exaggeration: 1.5
+		});
+	}
+
+	function handleMarkerClick(map: mapboxgl.Map, marker: mapboxgl.Marker) {
+		if (!map.isMoving()) {
+			map.flyTo({
+				center: marker.getLngLat(),
+				zoom: 15,
+				bearing: 130,
+				pitch: 75,
+				duration: 5000,
+				essential: true
+			});
+		}
+	}
+
+	function handleRidesCommand() {}
 </script>
 
 <svelte:head>
-	<title>Home</title>
-	<meta name="description" content="Svelte demo app" />
+	<title>🚵 My MTB Maps</title>
+	<meta
+		name="description"
+		content="A demo app built with Svelte that showcases MTB trails I've ridden"
+	/>
 </svelte:head>
 
-<section>
-	<h1>
-		<span class="welcome">
-			<picture>
-				<source srcset={welcome} type="image/webp" />
-				<img src={welcome_fallback} alt="Welcome" />
-			</picture>
-		</span>
+<div class="fixed top-5 left-5 z-10 flex items-center gap-2">
+	<Key>⌘</Key>
+	<Key>K</Key>
+	<span> To bring up my rides </span>
+</div>
 
-		to your new<br />SvelteKit app
-	</h1>
+<MetaCommand keyCode="KeyK" onTrigger={handleRidesCommand} />
 
-	<h2>
-		try editing <strong>src/routes/+page.svelte</strong>
-	</h2>
+<Map zoom={10} center={defaultCenter} projection="globe" onLoad={handleMapLoad}>
+	{#each data.rides as ride}
+		<Marker lat={ride.centerLat} lng={ride.centerLng} onClick={handleMarkerClick} />
+	{/each}
 
-	<Counter />
-</section>
-
-<style>
-	section {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		flex: 0.6;
-	}
-
-	h1 {
-		width: 100%;
-	}
-
-	.welcome {
-		display: block;
-		position: relative;
-		width: 100%;
-		height: 0;
-		padding: 0 0 calc(100% * 495 / 2048) 0;
-	}
-
-	.welcome img {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		top: 0;
-		display: block;
-	}
-</style>
+	<MapResetCommand />
+</Map>
