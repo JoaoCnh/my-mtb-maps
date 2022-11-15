@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { fade } from 'svelte/transition';
+	import { cubicInOut } from 'svelte/easing';
 	import Map from './Map.svelte';
 	import Key from './Key.svelte';
 	import Marker from './Marker.svelte';
@@ -10,6 +12,10 @@
 	import type { PageData } from './$types';
 
 	export let data: PageData;
+
+	let currentMarker: mapboxgl.Marker | undefined;
+
+	$: isFocused = !!currentMarker;
 
 	function handleMapLoad(map: mapboxgl.Map) {
 		map.addSource('mapbox-dem', {
@@ -24,6 +30,7 @@
 	}
 
 	function handleMarkerClick(map: mapboxgl.Map, marker: mapboxgl.Marker) {
+		currentMarker = marker;
 		if (!map.isMoving()) {
 			map.flyTo({
 				center: marker.getLngLat(),
@@ -37,6 +44,10 @@
 	}
 
 	function handleRidesCommand() {}
+
+	function handleMapReset() {
+		currentMarker = undefined;
+	}
 </script>
 
 <svelte:head>
@@ -47,11 +58,21 @@
 	/>
 </svelte:head>
 
-<div class="fixed top-5 left-5 z-10 flex items-center gap-2">
-	<Key>⌘</Key>
-	<Key>K</Key>
-	<span> To bring up my rides </span>
+<div class="fixed top-5 left-5 z-10 flex flex-col gap-2">
+	<div class="flex items-center gap-2">
+		<Key>⌘</Key>
+		<Key>K</Key>
+		<span> To bring up my rides </span>
+	</div>
+	{#if isFocused}
+		<div class="flex items-center gap-2" transition:fade={{ duration: 280, easing: cubicInOut }}>
+			<Key>⌘</Key>
+			<Key>L</Key>
+			<span> To reset the map </span>
+		</div>
+	{/if}
 </div>
+
 
 <MetaCommand keyCode="KeyK" onTrigger={handleRidesCommand} />
 
@@ -60,5 +81,5 @@
 		<Marker lat={ride.centerLat} lng={ride.centerLng} onClick={handleMarkerClick} />
 	{/each}
 
-	<MapResetCommand />
+	<MapResetCommand onReset={handleMapReset} />
 </Map>

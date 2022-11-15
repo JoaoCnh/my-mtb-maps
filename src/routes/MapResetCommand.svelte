@@ -1,7 +1,9 @@
-<script>
+<script lang="ts">
 	import MetaCommand from './MetaCommand.svelte';
 
 	import { defaultCenter, getMapController } from '$lib/mapbox';
+
+	export let onReset: (map: mapboxgl.Map) => void = () => {};
 
 	const { getMap } = getMapController();
 
@@ -17,6 +19,7 @@
 				duration: 2500,
 				essential: true
 			});
+			onReset(map);
 		}
 	}
 </script>
