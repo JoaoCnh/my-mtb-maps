@@ -8,16 +8,17 @@
 
 	const map = getMap();
 
+	export let id: string;
 	export let lat: number;
 	export let lng: number;
-	export let onClick: (map: Map, marker: Marker) => void = () => {};
+	export let onClick: (id: string, map: Map, marker: Marker) => void = () => {};
 
 	const marker = new mapbox.Marker().setLngLat([lng, lat]).addTo(map);
 
 	const markerEl = marker.getElement();
 
 	markerEl.addEventListener('click', () => {
-		onClick(map, marker);
+		onClick(id, map, marker);
 	});
 
 	onDestroy(() => {

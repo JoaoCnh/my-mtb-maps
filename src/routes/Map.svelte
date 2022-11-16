@@ -13,6 +13,7 @@
 	export let projection: 'normal' | 'globe' = 'normal';
 	export let zoom: number;
 	export let center: [number, number];
+	export let cooperativeGestures: boolean = false;
 	export let onLoad: (map: mapboxgl.Map) => void;
 
 	onMount(async () => {
@@ -23,6 +24,7 @@
 			zoom,
 			pitch: 0,
 			bearing: 0,
+			cooperativeGestures,
 			projection:
 				projection === 'globe'
 					? {
