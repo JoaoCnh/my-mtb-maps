@@ -1,4 +1,5 @@
-interface Ride {
+export interface Ride {
+	id: string;
 	name: string;
 	centerLat: number;
 	centerLng: number;
@@ -6,8 +7,9 @@ interface Ride {
 
 export const rides: Ride[] = [
 	{
+		id: 'meia-perna',
 		name: 'Meia Perna',
-		centerLat: 41.24282068378484,
-		centerLng: -8.574242046560368
+		centerLat: 41.22654,
+		centerLng: -8.57923
 	}
 ];
