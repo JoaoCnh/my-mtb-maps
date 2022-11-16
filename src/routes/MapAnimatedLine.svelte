@@ -50,17 +50,22 @@
 	});
 
 	const bounds = new mapbox.LngLatBounds(
-        firstCoord as unknown as [number, number],
-        firstCoord as unknown as [number, number],
-    );
+		firstCoord as unknown as [number, number],
+		firstCoord as unknown as [number, number]
+	);
 
 	restOfCoords.forEach((coord) => {
 		bounds.extend(coord as unknown as [number, number]);
 	});
 
-	
 	if (!map.isMoving()) {
-		map.fitBounds(bounds, { padding: 20, bearing: 130, pitch: 75, duration: 5000, essential: true });
+		map.fitBounds(bounds, {
+			padding: 20,
+			bearing: 130,
+			pitch: 75,
+			duration: 5000,
+			essential: true
+		});
 	}
 
 	let animation: number;

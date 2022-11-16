@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
+	import { goto } from '$app/navigation';
 	import Map from './Map.svelte';
 	import Key from './Key.svelte';
 	import Marker from './Marker.svelte';
@@ -37,7 +38,7 @@
 
 	async function loadRide(rideId: string) {
 		try {
-			currentGeoJson = await fetchGeoJson(rideId) as GeoJson;
+			currentGeoJson = (await fetchGeoJson(rideId)) as GeoJson;
 			currentMarker = rideId;
 		} catch (error) {
 			currentMarker = undefined;
@@ -62,6 +63,10 @@
 		if (ride.id !== currentMarker) {
 			loadRide(ride.id);
 		}
+	}
+
+	function handleInfoCommand() {
+		goto('/info');
 	}
 </script>
 
@@ -93,6 +98,11 @@
 			{/each}
 		</ul>
 	{:else}
+		<div class="flex items-center gap-2" transition:fade={{ duration: 280, easing: cubicInOut }}>
+			<Key>⌘</Key>
+			<Key>I</Key>
+			<span> To see more info </span>
+		</div>
 		<div class="flex items-center gap-2">
 			<Key>⌘</Key>
 			<Key>K</Key>
@@ -101,7 +111,7 @@
 		{#if isFocused}
 			<div class="flex items-center gap-2" transition:fade={{ duration: 280, easing: cubicInOut }}>
 				<Key>⌘</Key>
-				<Key>L</Key>
+				<Key>J</Key>
 				<span> To reset the map </span>
 			</div>
 		{/if}
@@ -109,6 +119,7 @@
 </div>
 
 <MetaCommand keyCode="KeyK" onTrigger={handleRidesCommand} />
+<MetaCommand keyCode="KeyI" onTrigger={handleInfoCommand} />
 
 <Map zoom={10} center={defaultCenter} projection="globe" onLoad={handleMapLoad}>
 	{#each data.rides as ride (ride.id)}

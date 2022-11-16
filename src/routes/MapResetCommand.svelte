@@ -24,4 +24,4 @@
 	}
 </script>
 
-<MetaCommand keyCode="KeyL" onTrigger={handleMapResetCommand} />
+<MetaCommand keyCode="KeyJ" onTrigger={handleMapResetCommand} />
